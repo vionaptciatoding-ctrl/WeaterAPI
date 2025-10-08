@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek Cuaca</title>
+</head>
+<body>
+    <h2>Cek Cuaca Berdasarkan Lokasi</h2>
+    <input type="text" id="inputLokasi" placeholder="Masukkan lokasi (misal: Jakarta)">
+    <button id="btnCari">Cari Cuaca</button>
+<hr>
+    <p>Lokasi: <span id="lokasi"></span></p>
+    <p>Negara: <span id="negara"></span></p>
+    <p>Provinsi: <span id="provinsi"></span></p>
+    <p>Zona Waktu: <span id="kecamatan"></span></p>
+    <p>Longitude: <span id="longitude"></span></p>
+    <p>Latitude: <span id="latitude"></span></p>
+    <p>Suhu (°C): <span id="suhu"></span></p>
+
+    <hr>
+   
+    <div id="tampilan"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        $("#btnCari").click(function() {
+            const lokasiInput = $("#inputLokasi").val().trim();
+
+            if (lokasiInput === "") {
+                alert("Masukkan nama lokasi terlebih dahulu!");
+                return;
+            }
+            const urlapi = `https://api.weatherapi.com/v1/current.json?key=f66a2beb45d14b238e964000250810&q=${lokasiInput}&aqi=no`;
+
+
+            $.ajax({
+                url: urlapi,
+                method: "GET",
+                success: function(data) {
+                    console.log(data);
+
+                    
+                    $("#lokasi").text(data.location.name);
+                    $("#negara").text(data.location.country);
+                    $("#provinsi").text(data.location.region);
+                    $("#kecamatan").text(data.location.tz_id);
+                    $("#longitude").text(data.location.lon);
+                    $("#latitude").text(data.location.lat);
+                    $("#suhu").text(data.current.temp_c + " °C");
+
+                   
+                    $("#tampilan").html(`
+                        <h3>Detail Cuaca:</h3>
+                        <p>Terakhir diperbarui: ${data.current.last_updated}</p>
+                        <p>Kondisi: ${data.current.condition.text}</p>
+                        <img src="https:${data.current.condition.icon}" alt="icon cuaca">
+                    `);
+                      },
+                error: function(xhr) {
+                    console.error(xhr);
+                    alert("Lokasi tidak ditemukan atau API error. Coba nama kota lain!");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
